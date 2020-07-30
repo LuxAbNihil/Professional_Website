@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <meta charset = "utf-8"/>
+    <meta name = "viewport" content = "width-device-width"/>
+    <title>Contact Me</title>
+    <link rel = "stylesheet" href = "stylesheets/stylesheet.css"/>
+    <script type = "text/javascript" src = "scripts/form_handler.js"></script>
+</head>
+<body>
+<body>
+    <header>
+        <figure id = "sitelogo">
+            <img src = "images/sitelogo.png" alt = "Site Logo"/>
+        </figure>
+        <nav>
+            <div class = "nav-container">
+                <div class = "nav-item" ><a href = "index.html">Home</a></div>
+                <div class = "nav-item" ><a href = "biography.html">Biography</a></div>
+                <div class = "nav-item" ><a href = "hobbies_and_interests.html">Hobbies and Interests</a></div>
+                <div class = "nav-item" id = "leftmost"><a href = "contact_me.html">Contact Me</a></div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <h1>Contact Me: </h1>
+        <div class = "form-container">
+            <form method = "POST" action = "process_request.php">
+                <div class = "form-canvas">
+                    <div class = "form-element">
+                        <label for = "honorific">Honorific: </label>
+                        <input type = "text" name = "honorific" id = "honorific" list = "honorifics"/>
+                            <datalist id = "honorifics">
+                                <option>Mr.</option>
+                                <option>Mrs.</option>
+                                <option>Miss</option>
+                                <option>Ms.</option>
+                                <option>Mx.</option>
+                                <option>Dr.</option>
+                            </datalist>
+                    </div>
+                    <div class = "form-element">
+                        <label for = "name">Name:<span class = "required-indicator">*</span> </label>
+                        <input type = "text" name = "name" id = "name" required/>
+                    </div>  
+                    <div class = "form-element">
+                        <label for = "company">Company: </label>
+                        <input type = "text" name = "company" id = "company"/>
+                    </div> 
+                        <div class = "form-element">
+                            <label for = "email">Email:<span class = "required-indicator">*</span> </label>
+                            <input type = "email" name = "email" id = "email" required/>    
+                        </div>
+                        <div class = "form-element">
+                            <label for = "telephone_number">Telephone Number: </label>
+                            <input type = "tel" name = "telephone_number" id = "telephone_number"/>
+                        </div>
+                        <div class = "form-element">
+                            <label for = "message">Message:<span class = "required-indicator">*</span> </label>
+                            <textarea rows = "5" name = "message" id = "message" required></textarea>
+                        </div>
+                    <div class = "form-element" id = "last-element">
+                        <div id = "form-submit">
+                            <input type = "submit" value = "Submit"/>
+                        </div>
+                    </div>
+                    <p id = "form-info-required-indicator"><span class = "required-indicator">*</span> Indicates a required field.</p>
+                </div>
+            </form>
+        </div> 
+    </main>
+    <footer>
+        <p id = "design-disclosure"> This website is designed with HTML5 and CSS3.  For optimal viewing please use a modern browser.</p>
+        <p> &copy 2020 by Daniel M DeMartino </p>
+    </footer>
+</body>
+</html>
