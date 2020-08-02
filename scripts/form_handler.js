@@ -48,46 +48,24 @@ window.addEventListener("load", function() {
         let isHonorificValid = honorificRegExp.test(honorific.value);
         setBackgroundColorAccordingToInputValidity(honorific, isHonorificValid);
         if(!isHonorificValid) {
-            /*gets parent node, then creates a new paragraph node and new text node, then appends text node to the paragraph node and finally 
-            appends the new paragraph node to the parent element (div class = "form-element") */
-            let parent = honorific.parentNode;
-            let newParagraph = document.createElement("p");
-            let errorText = document.createTextNode("Honorifics can have up to 10 letters in the English alphabet and optionally end with a period");
-            newParagraph.id = "honorific-error-text";
-            newParagraph.appendChild(errorText);
-            parent.appendChild(newParagraph);
+            let errorText = "Honorifics can have up to 10 letters in the English alphabet and optionally end with a period";
+            setErrorText(honorific, errorText);
+        } else {
+            removeErrorTextIfValid(honorific, isHonorificValid, false);
         }
     });
-
-    honorific.addEventListener("focus", function () {
-        let errorNode = document.getElementById("honorific-error-text")
-        if( errorNode !== null) {
-            errorNode.remove();
-        }
-    })
 
      //add event listener for creating feedback on valid input
     name.addEventListener("blur", function() {
         let isNameValid = nameRegExp.test(name.value);
         setBackgroundColorAccordingToInputValidity(name, isNameValid);
         if(!isNameValid) {
-            let parent = name.parentNode;
-            let newParagraph = document.createElement("p");
-            let errorText = document.createTextNode("Names consist of the letters a through z in upper or lower case and can include apostrophes and spaces and can be up to 127 characters long");
-            newParagraph.id = "name-error-text";
-            newParagraph.appendChild(errorText);
-            parent.appendChild(newParagraph);
+            let errorText = "Names consist of the letters a through z in upper or lower case and can include apostrophes and spaces and can be up to 127 characters long";
+            setErrorText(name, errorText);
+        } else {
+            removeErrorTextIfValid(name, isNameValid, true);
         }
     });
-
-    name.addEventListener("focus", function() {
-        let errorNode = document.getElementById("name-error-text");
-        if(errorNode !== null) {
-            errorNode.remove();
-        }
-    })
-
-
 
      //add event listener for creating feedback on valid input
     company.addEventListener("blur", function() {
@@ -98,7 +76,7 @@ window.addEventListener("load", function() {
             + "numerals, apostrophes, dashes, and underscores.  Must start with either a letter or a number.";
             setErrorText(company, errorText);
         } else {
-            removeErrorTextIfValid(company, isCompanyValid);
+            removeErrorTextIfValid(company, isCompanyValid, false);
         }
     });
 
@@ -114,7 +92,7 @@ window.addEventListener("load", function() {
 
         let validCall = function() {
             setBackgroundColorAccordingToInputValidity(email, isEmailValid);
-            removeErrorTextIfValid(email, isEmailValid);
+            removeErrorTextIfValid(email, isEmailValid, true);
         }
 
         if(isEmailValid) {
@@ -124,11 +102,6 @@ window.addEventListener("load", function() {
         }
     });
 
-    email.addEventListener("focus", function () {
-        let isEmailValid = validateEmail(email);
-        removeErrorTextIfValid(email, isEmailValid);
-    })
-
     telephone.addEventListener("blur", function() {
         let isPhoneValid = telephoneRegExp.test(telephone.value);
         if(!isPhoneValid && telephone.value !== "") {
@@ -137,8 +110,8 @@ window.addEventListener("load", function() {
                 "be seperated by spaces, dashes, or nothing";
             setBackgroundColorAccordingToInputValidity(telephone, isPhoneValid);
             setErrorText(telephone, errorText);
-        } else if(isPhoneValid) {
-            removeErrorTextIfValid(telephone, isPhoneValid);
+        } else {
+            removeErrorTextIfValid(telephone, isPhoneValid, false);
         }
     });
     
@@ -164,21 +137,26 @@ window.addEventListener("load", function() {
         if(document.getElementById(node.id + "-error-text") !== null) {
             return;
         } 
+        /*gets parent node, then creates a new paragraph node and new text node, then appends text node to the paragraph node and finally 
+            appends the new paragraph node to the parent element (div class = "form-element") */
         let parent = node.parentNode;
-         let newParagraph = document.createElement("p");
-         let errorTextNode = document.createTextNode(errorText);
-         newParagraph.id = node.id + "-error-text"; //automatically generates id for new p node based on given id of HTML form element.
-         newParagraph.appendChild(errorTextNode);
-         parent.appendChild(newParagraph);
+        let newParagraph = document.createElement("p");
+        let errorTextNode = document.createTextNode(errorText);
+        newParagraph.id = node.id + "-error-text"; //automatically generates id for new p node based on given id of HTML form element.
+        newParagraph.appendChild(errorTextNode);
+        parent.appendChild(newParagraph);
      }
 
-     /**removes error text p from form element div if the input is determined to be valid. node is the element that the
-        error message is attached to and boolean is true if input is valid and false if invalid */
-     let removeErrorTextIfValid = function(node, boolean) {
-         let errorNode = document.getElementById(node.id + "-error-text"); //automatically selects error text p element of given node
-         if(errorNode != null && boolean === true) {
-             errorNode.remove();
-         }
+     /**Removes error text p from form element div if the input is determined to be valid. node is the element that the
+        error message is attached to, valid is true if input is valid and false if invalid, and required is true if the 
+        input field is required and false otherwise */
+     let removeErrorTextIfValid = function(node, valid, required) {
+        let errorNode = document.getElementById(node.id + "-error-text"); //automatically selects error text p element of given node
+        if(errorNode !== null && valid === true ) {
+            errorNode.remove();
+        } else if (errorNode !== null && valid === false && required === false) {
+            errorNode.remove();
+        }
      } 
 
      let validateEmail = function(email) {
