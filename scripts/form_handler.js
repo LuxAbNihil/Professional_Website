@@ -141,11 +141,6 @@ window.addEventListener("load", function() {
             removeErrorTextIfValid(telephone, isPhoneValid);
         }
     });
-
-    telephone.addEventListener("focus", function () {
-        let isPhoneValid = telephoneRegExp.test(telephone.value);
-        removeErrorTextIfValid(telephone, isPhoneValid);
-    })
     
     submitButton.addEventListener("onClick", function(event) {
         event.preventDefault();
