@@ -94,21 +94,13 @@ window.addEventListener("load", function() {
         let isCompanyValid = companyRegExp.test(company.value);
         setBackgroundColorAccordingToInputValidity(company, isCompanyValid);
         if(!isCompanyValid) {
-            let parent = company.parentNode;
-            let newParagraph = document.createElement("p");
-            let errorText = document.createTextNode("Company names can include upper or lower case letters, numerals, apostrophes, dashes, and underscores.  Must start with either a letter or a number.");
-            newParagraph.id = "company-error-text";
-            newParagraph.appendChild(errorText);
-            parent.appendChild(newParagraph);
+            let errorText = "Company names can include upper or lower case letters, " 
+            + "numerals, apostrophes, dashes, and underscores.  Must start with either a letter or a number.";
+            setErrorText(company, errorText);
+        } else {
+            removeErrorTextIfValid(company, isCompanyValid);
         }
     });
-
-    company.addEventListener("focus", function() {
-        let errorNode = document.getElementById("company-error-text");
-        if(errorNode !== null) {
-            errorNode.remove();
-        }
-    })
 
      //add event listener for creating feedback on valid input
     email.addEventListener("blur", function (){
