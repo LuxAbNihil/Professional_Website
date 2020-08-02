@@ -17,21 +17,26 @@ window.addEventListener("load", function() {
     let telephone = document.getElementById("telephone_number");
     let message = document.getElementById("message")
 
+    //Regular Expressions for validating input in form
     let honorificRegExp = new RegExp('^[a-z]{0,10}[\.]?$', 'i');
     let nameRegExp = new RegExp("^[a-z]?([a-z]| |'){0,127}$", "i");
     let companyRegExp = new RegExp("^([a-z]|[0-9])?([a-z]|[0-9]| |\'|\-|\_){0,127}$", "i");
-    
     let emailPrefixRegExp = new RegExp("^(([a-z]|[0-9])+(|\-|\_|\.))+([a-z]|[0-9])", "i");
     let emailDomainRegExp = new RegExp("^(([a-z]|[0-9])+((\-)?([a-z]|[0-9])+)+)+$", "i");
-
     let telephoneRegExp = new RegExp(/^([0-9]{0,3}(\-| ){0,1})?((\([0-9]{3}\)|[0-9]{3}))((\-| )?[0-9]{3})((\-| )?[0-9]{4})$/);
+
+    //sets all valid input flags to true for page initialization 
+
 
     //grab default backgorund color submit input
     let submitButtonOriginalBackgroundColor = submitButton.style.backgroundColor;
 
     //loop through and add event listeners to text inputs
     for(let i = 0; i < inputList.length - 1; i ++) {
-        inputList[i].addEventListener("focus", function() {changeBackgroundColor(inputList[i], focusBackgroundColor)});
+        inputList[i].addEventListener("focus", function() {
+            changeBackgroundColor(inputList[i], focusBackgroundColor)
+            checkValidFlag(inputList[i])
+        });
         inputList[i].addEventListener("blur", function() {changeBackgroundColor(inputList[i], blurBackgroundColor)});
     }
 
@@ -74,7 +79,7 @@ window.addEventListener("load", function() {
         if(!isNameValid) {
             let parent = name.parentNode;
             let newParagraph = document.createElement("p");
-            let errorText = document.createTextNode("Names consist of the letters a through z in upper or lower case and can include apostrophes and can be up to 127 characters long");
+            let errorText = document.createTextNode("Names consist of the letters a through z in upper or lower case and can include apostrophes and spaces and can be up to 127 characters long");
             newParagraph.id = "name-error-text";
             newParagraph.appendChild(errorText);
             parent.appendChild(newParagraph);
@@ -178,22 +183,19 @@ window.addEventListener("load", function() {
     telephone.addEventListener("blur", function() {
         let isPhoneValid = telephoneRegExp.test(telephone.value);
         if(!isPhoneValid && telephone.value !== "") {
+            let errorText = "Telephone numbers must be in the format ccc-(xxx)-xxx-xxxx where ccc is an optional country code.  " +
+                "The parantheses are also optional and number blocks can " +
+                "be seperated by spaces, dashes, or nothing";
             isInputValid(telephone, isPhoneValid);
-            let parent = telephone.parentNode;
-            let newParagraph = document.createElement("p");
-            let errorText = document.createTextNode("Telephone numbers must be in the format ccc(xxx)xxx-xxxx where ccc is an optional country code.  The paranthesis are also optional and number blocks can " +
-                "be seperated by spaces, dashes, or nothing");
-            newParagraph.id = "telephone-error-text";
-            newParagraph.appendChild(errorText);
-            parent.appendChild(newParagraph);
+            setErrorText(telephone, errorText);
+        } else if(isPhoneValid) {
+            removeErrorTextIfValid(telephone, isPhoneValid);
         }
     });
 
     telephone.addEventListener("focus", function () {
-        let errorNode = document.getElementById("telephone-error-text");
-        if(errorNode !== null) {
-            errorNode.remove();
-        }
+        let isPhoneValid = telephoneRegExp.test(telephone.value);
+        removeErrorTextIfValid(telephone, isPhoneValid);
     })
     
     submitButton.addEventListener("onClick", function(event) {
@@ -213,6 +215,22 @@ window.addEventListener("load", function() {
         }
      }
 
-     
- 
+     //creates a new paragraph with given error text and appends it to the form element div.
+     let setErrorText = function(node, errorText) {
+         let parent = node.parentNode;
+         let newParagraph = document.createElement("p");
+         let errorTextNode = document.createTextNode(errorText);
+         newParagraph.id = node.id + "-error-text"; //automatically generates id for new p node based on given id of HTML form element.
+         newParagraph.appendChild(errorTextNode);
+         parent.appendChild(newParagraph);
+     }
+
+     /*removes error text p from form element div if the input is determined to be valid. node is the element that the
+        error message is attached to and boolean is true if input is valid and false if invalid */
+     let removeErrorTextIfValid = function(node, boolean) {
+         let errorNode = document.getElementById(node.id + "-error-text"); //automatically selects error text p element of given node
+         if(errorNode != null && boolean === true) {
+             errorNode.remove();
+         }
+     } 
 });
