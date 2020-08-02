@@ -41,6 +41,7 @@ h1 {
 }
 
 label {
+    font-size: large;
     padding: 0vw 0vw 0.2vw 0vw;
 }
 
@@ -56,6 +57,10 @@ a:visited {
 a:hover {
     color: cyan;
     text-decoration: underline lightblue;
+}
+
+.error-text {
+    text-align: center;
 }
 
 .form-canvas {

@@ -48,20 +48,68 @@ window.addEventListener("load", function() {
     honorific.addEventListener("blur", function() {
         let isHonorificValid = honorificRegExp.test(honorific.value);
         isInputValid(honorific, isHonorificValid);
+        if(!isHonorificValid) {
+            /*gets parent node, then creates a new paragraph node and new text node, then appends text node to the paragraph node and finally 
+            appends the new paragraph node to the parent element (div class = "form-element") */
+            let parent = honorific.parentNode;
+            let newParagraph = document.createElement("p");
+            let errorText = document.createTextNode("Honorifics can have up to 10 letters in the English alphabet and optionally end with a period");
+            newParagraph.id = "honorific-error-text";
+            newParagraph.appendChild(errorText);
+            parent.appendChild(newParagraph);
+        }
     });
+
+    honorific.addEventListener("focus", function () {
+        let errorNode = document.getElementById("honorific-error-text")
+        if( errorNode !== null) {
+            errorNode.remove();
+        }
+    })
 
      //add event listener for creating feedback on valid input
     name.addEventListener("blur", function() {
         let isNameValid = nameRegExp.test(name.value);
         isInputValid(name, isNameValid);
-        
+        if(!isNameValid) {
+            let parent = name.parentNode;
+            let newParagraph = document.createElement("p");
+            let errorText = document.createTextNode("Names consist of the letters a through z in upper or lower case and can include apostrophes and can be up to 127 characters long");
+            newParagraph.id = "name-error-text";
+            newParagraph.appendChild(errorText);
+            parent.appendChild(newParagraph);
+        }
     });
+
+    name.addEventListener("focus", function() {
+        let errorNode = document.getElementById("name-error-text");
+        if(errorNode !== null) {
+            errorNode.remove();
+        }
+    })
+
+
 
      //add event listener for creating feedback on valid input
     company.addEventListener("blur", function() {
         let isCompanyValid = companyRegExp.test(company.value);
         isInputValid(company, isCompanyValid);
+        if(!isCompanyValid) {
+            let parent = company.parentNode;
+            let newParagraph = document.createElement("p");
+            let errorText = document.createTextNode("Company names can include upper or lower case letters, numerals, apostrophes, dashes, and underscores.  Must start with either a letter or a number.");
+            newParagraph.id = "company-error-text";
+            newParagraph.appendChild(errorText);
+            parent.appendChild(newParagraph);
+        }
     });
+
+    company.addEventListener("focus", function() {
+        let errorNode = document.getElementById("company-error-text");
+        if(errorNode !== null) {
+            errorNode.remove();
+        }
+    })
 
      //add event listener for creating feedback on valid input
     email.addEventListener("blur", function (){
@@ -69,6 +117,12 @@ window.addEventListener("load", function() {
         let call = function () {
             isEmailValid = false;
             isInputValid(email, isEmailValid);
+            let parent = email.parentNode;
+            let newParagraph = document.createElement("p");
+            let errorText = document.createTextNode("Emails must be in the format xxxxx@xxx.xxx");
+            newParagraph.id = "email-error-text";
+            newParagraph.appendChild(errorText);
+            parent.appendChild(newParagraph);
         }
 
         let validCall = function() {
@@ -112,19 +166,39 @@ window.addEventListener("load", function() {
         }
 
         isInputValid(email, isEmailValid);
-
     });
+
+    email.addEventListener("focus", function () {
+        let errorNode = document.getElementById("email-error-text");
+        if(errorNode !== null) {
+            errorNode.remove();
+        }
+    })
 
     telephone.addEventListener("blur", function() {
         let isPhoneValid = telephoneRegExp.test(telephone.value);
         if(!isPhoneValid && telephone.value !== "") {
             isInputValid(telephone, isPhoneValid);
+            let parent = telephone.parentNode;
+            let newParagraph = document.createElement("p");
+            let errorText = document.createTextNode("Telephone numbers must be in the format ccc(xxx)xxx-xxxx where ccc is an optional country code.  The paranthesis are also optional and number blocks can " +
+                "be seperated by spaces, dashes, or nothing");
+            newParagraph.id = "telephone-error-text";
+            newParagraph.appendChild(errorText);
+            parent.appendChild(newParagraph);
+        }
+    });
+
+    telephone.addEventListener("focus", function () {
+        let errorNode = document.getElementById("telephone-error-text");
+        if(errorNode !== null) {
+            errorNode.remove();
         }
     })
     
     submitButton.addEventListener("onClick", function(event) {
         event.preventDefault();
-    })
+    });
 
     //changes background color to specified color for the specified element
     function changeBackgroundColor(element, color) {
