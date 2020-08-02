@@ -25,18 +25,12 @@ window.addEventListener("load", function() {
     let emailDomainRegExp = new RegExp("^(([a-z]|[0-9])+((\-)?([a-z]|[0-9])+)+)+$", "i");
     let telephoneRegExp = new RegExp(/^([0-9]{0,3}(\-| ){0,1})?((\([0-9]{3}\)|[0-9]{3}))((\-| )?[0-9]{3})((\-| )?[0-9]{4})$/);
 
-    //sets all valid input flags to true for page initialization 
-
-
     //grab default backgorund color submit input
     let submitButtonOriginalBackgroundColor = submitButton.style.backgroundColor;
 
     //loop through and add event listeners to text inputs
     for(let i = 0; i < inputList.length - 1; i ++) {
-        inputList[i].addEventListener("focus", function() {
-            changeBackgroundColor(inputList[i], focusBackgroundColor)
-            checkValidFlag(inputList[i])
-        });
+        inputList[i].addEventListener("focus", function() {changeBackgroundColor(inputList[i], focusBackgroundColor)});
         inputList[i].addEventListener("blur", function() {changeBackgroundColor(inputList[i], blurBackgroundColor)});
     }
 
@@ -52,7 +46,7 @@ window.addEventListener("load", function() {
     //add event listener for creating feedback on valid input
     honorific.addEventListener("blur", function() {
         let isHonorificValid = honorificRegExp.test(honorific.value);
-        isInputValid(honorific, isHonorificValid);
+        setBackgroundColorAccordingToInputValidity(honorific, isHonorificValid);
         if(!isHonorificValid) {
             /*gets parent node, then creates a new paragraph node and new text node, then appends text node to the paragraph node and finally 
             appends the new paragraph node to the parent element (div class = "form-element") */
@@ -75,7 +69,7 @@ window.addEventListener("load", function() {
      //add event listener for creating feedback on valid input
     name.addEventListener("blur", function() {
         let isNameValid = nameRegExp.test(name.value);
-        isInputValid(name, isNameValid);
+        setBackgroundColorAccordingToInputValidity(name, isNameValid);
         if(!isNameValid) {
             let parent = name.parentNode;
             let newParagraph = document.createElement("p");
@@ -98,7 +92,7 @@ window.addEventListener("load", function() {
      //add event listener for creating feedback on valid input
     company.addEventListener("blur", function() {
         let isCompanyValid = companyRegExp.test(company.value);
-        isInputValid(company, isCompanyValid);
+        setBackgroundColorAccordingToInputValidity(company, isCompanyValid);
         if(!isCompanyValid) {
             let parent = company.parentNode;
             let newParagraph = document.createElement("p");
@@ -118,66 +112,29 @@ window.addEventListener("load", function() {
 
      //add event listener for creating feedback on valid input
     email.addEventListener("blur", function (){
-        let isEmailValid = true;
+        let isEmailValid = validateEmail(email);;
         let call = function () {
             isEmailValid = false;
-            isInputValid(email, isEmailValid);
-            let parent = email.parentNode;
-            let newParagraph = document.createElement("p");
-            let errorText = document.createTextNode("Emails must be in the format xxxxx@xxx.xxx");
-            newParagraph.id = "email-error-text";
-            newParagraph.appendChild(errorText);
-            parent.appendChild(newParagraph);
+            setBackgroundColorAccordingToInputValidity(email, isEmailValid);
+            let errorText = "Emails must be in the format xxxxx@xxx.xxx";
+            setErrorText(email, errorText);
         }
 
         let validCall = function() {
-            isInputValid(email, isEmailValid);
+            setBackgroundColorAccordingToInputValidity(email, isEmailValid);
+            removeErrorTextIfValid(email, isEmailValid);
         }
 
-        if(email.value === "") {
+        if(isEmailValid) {
             validCall();
-            return;
-        }
-
-        let emailPrefixAndDomain = email.value.split(/@/);
-        if(emailPrefixAndDomain.length != 2){
+        } else {
             call();
-            return;
         }
-
-        if(!emailPrefixRegExp.test(emailPrefixAndDomain[0])) {
-            call();
-            return;
-        }
-
-        if(emailPrefixAndDomain[1].length < 3 | emailPrefixAndDomain[1].length > 255) {
-            call();
-            return;
-        }
-
-        let emailDomains = emailPrefixAndDomain[1].split(/\./);
-        let maxIterations = emailDomains.length;
-        
-        if(emailDomains.length < 2) {
-            call();
-            return;
-        }
-
-        for(index = 0; index < maxIterations; index++) {
-            if(!emailDomainRegExp.test(emailDomains[index])) {
-                call()
-                break;
-            }
-        }
-
-        isInputValid(email, isEmailValid);
     });
 
     email.addEventListener("focus", function () {
-        let errorNode = document.getElementById("email-error-text");
-        if(errorNode !== null) {
-            errorNode.remove();
-        }
+        let isEmailValid = validateEmail(email);
+        removeErrorTextIfValid(email, isEmailValid);
     })
 
     telephone.addEventListener("blur", function() {
@@ -186,7 +143,7 @@ window.addEventListener("load", function() {
             let errorText = "Telephone numbers must be in the format ccc-(xxx)-xxx-xxxx where ccc is an optional country code.  " +
                 "The parantheses are also optional and number blocks can " +
                 "be seperated by spaces, dashes, or nothing";
-            isInputValid(telephone, isPhoneValid);
+            setBackgroundColorAccordingToInputValidity(telephone, isPhoneValid);
             setErrorText(telephone, errorText);
         } else if(isPhoneValid) {
             removeErrorTextIfValid(telephone, isPhoneValid);
@@ -207,7 +164,7 @@ window.addEventListener("load", function() {
       element.style = "background-color: " + color;
      }
 
-    let isInputValid = function (element, input) {
+    let setBackgroundColorAccordingToInputValidity = function (element, input) {
         if(!input) {
             changeBackgroundColor(element, invalidInputIndicatorColor);
         } else {
@@ -215,9 +172,12 @@ window.addEventListener("load", function() {
         }
      }
 
-     //creates a new paragraph with given error text and appends it to the form element div.
+     /**creates a new paragraph with given error text and appends it to the form element div. */
      let setErrorText = function(node, errorText) {
-         let parent = node.parentNode;
+        if(document.getElementById(node.id + "-error-text") !== null) {
+            return;
+        } 
+        let parent = node.parentNode;
          let newParagraph = document.createElement("p");
          let errorTextNode = document.createTextNode(errorText);
          newParagraph.id = node.id + "-error-text"; //automatically generates id for new p node based on given id of HTML form element.
@@ -225,7 +185,7 @@ window.addEventListener("load", function() {
          parent.appendChild(newParagraph);
      }
 
-     /*removes error text p from form element div if the input is determined to be valid. node is the element that the
+     /**removes error text p from form element div if the input is determined to be valid. node is the element that the
         error message is attached to and boolean is true if input is valid and false if invalid */
      let removeErrorTextIfValid = function(node, boolean) {
          let errorNode = document.getElementById(node.id + "-error-text"); //automatically selects error text p element of given node
@@ -233,4 +193,35 @@ window.addEventListener("load", function() {
              errorNode.remove();
          }
      } 
+
+     let validateEmail = function(email) {
+        let emailPrefixAndDomain = email.value.split(/@/); 
+       
+
+        if(email.value === "") {
+             return true;
+        }
+        if (emailPrefixAndDomain.length !== 2) {
+            return false;
+        }
+
+        let emailDomains = emailPrefixAndDomain[1].split(/\./);
+        let maxIterations = emailDomains.length;
+
+        if (!emailPrefixRegExp.test(emailPrefixAndDomain[0])) {
+            return false;
+        }
+        if (emailPrefixAndDomain[1].length <= 3 | emailPrefixAndDomain[1].length >= 255) {
+            return false;
+        } //tests to ensure domain is at least three characters long and no longer than 255 characters.
+        if (emailDomains.length < 2) {
+            return false
+        } //ensures domain includes top level domain and at least one subdomain. 
+        for(let index = 0; index < maxIterations; index++) {
+            if(!emailDomainRegExp.test(emailDomains[index])) {
+                return false;
+            }
+        }
+        return true;
+     }
 });
