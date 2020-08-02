@@ -201,11 +201,11 @@ window.addEventListener("load", function() {
     });
 
     //changes background color to specified color for the specified element
-    function changeBackgroundColor(element, color) {
+    let changeBackgroundColor = function (element, color) {
       element.style = "background-color: " + color;
      }
 
-     function isInputValid(element, input) {
+    let isInputValid = function (element, input) {
         if(!input) {
             changeBackgroundColor(element, invalidInputIndicatorColor);
         } else {
